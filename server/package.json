@@ -1,0 +1,22 @@
+{
+  "name": "emailserver",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "sudo node dist/index.js",
+    "dev": "sudo nodemon index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "@types/smtp-server": "^3.5.10",
+    "dotenv": "^16.4.5",
+    "smtp-server": "^3.13.4"
+  }
+}
