@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/mailparser": "^3.4.4",
+    "mailparser": "^3.7.1"
+  }
+}
