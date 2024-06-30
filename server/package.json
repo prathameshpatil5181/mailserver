@@ -17,6 +17,8 @@
   "dependencies": {
     "@types/smtp-server": "^3.5.10",
     "dotenv": "^16.4.5",
-    "smtp-server": "^3.13.4"
+    "smtp-server": "^3.13.4",
+    "@types/mailparser": "^3.4.4",
+    "mailparser": "^3.7.1"
   }
 }
