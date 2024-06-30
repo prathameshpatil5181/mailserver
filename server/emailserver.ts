@@ -46,12 +46,11 @@ export default class emailServerClass {
 const handleEmailData = async (data: any) => {
   const parsed = await simpleParser(data);
   try {
-    const jsonParsed = await parsed.json();
+    const emailContent = parsed.text;
+    fs.writeFile("/content.txt", emailContent, (error) => {
+      console.log("error occured");
+    });
   } catch (error) {
     console.log(error);
   }
-  const jsonParsed = await parsed.json();
-  fs.writeFile("/content.txt", jsonParsed.toString(), (error) => {
-    console.log("error occured");
-  });
 };
