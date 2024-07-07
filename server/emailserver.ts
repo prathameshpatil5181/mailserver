@@ -23,6 +23,7 @@ export default class emailServerClass {
         console.log(`receiving mail to ${address}`);
         callback();
       },
+      
       onData(stream, session, callback) {
         if (isMainThread) {
           stream.on("data", (data) => {
@@ -32,7 +33,7 @@ export default class emailServerClass {
             handleEmailData(emaildata);
             console.log("email data");
             console.log(emaildata);
-            callback();
+            callback(); 
           });
         }
       },
