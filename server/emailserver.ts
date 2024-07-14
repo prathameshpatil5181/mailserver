@@ -2,6 +2,9 @@ import { SMTPServer } from "smtp-server";
 import { Worker, isMainThread, parentPort, workerData } from "worker_threads";
 import fs from "fs";
 const simpleParser = require("mailparser").simpleParser;
+import { logger } from ".";
+
+
 export default class emailServerClass {
   public server: SMTPServer;
   constructor() {
@@ -11,16 +14,25 @@ export default class emailServerClass {
       allowInsecureAuth: true,
       onConnect(session, callback) {
         console.log("onConnect", session.id);
+        logger.info({
+          message:session.id
+        });
         callback(); //accept the connection
       },
 
       onMailFrom(address, session, callback) {
         console.log(`receiving mail from ${address}`);
+        logger.info({
+          message: `receiving mail from ${address}`,
+        });
         callback();
       },
 
       onRcptTo(address, session, callback) {
         console.log(`receiving mail to ${address}`);
+        logger.info({
+          message: `Mail to ${address}`,
+        });
         callback();
       },
       
@@ -33,6 +45,10 @@ export default class emailServerClass {
             handleEmailData(emaildata);
             console.log("email data");
             console.log(emaildata);
+            logger.info({
+              type:"email data",
+              data: emaildata,
+            });
             callback(); 
           });
         }

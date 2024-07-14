@@ -8,12 +8,16 @@ COPY package-lock.json package-lock.json
 RUN npm i -g typescript
 RUN npm install pm2 -g
 
+EXPOSE 8000
+EXPOSE 25
+
 RUN npm install 
 
 COPY . .
 
 RUN tsc
 
-EXPOSE 25
+CMD ["node", "dist/index.js"]
 
-ENTRYPOINT [ "pm2", "start" , "dist/index.js"]
+
+# ENTRYPOINT [ "pm2", "start" , "dist/index.js"]

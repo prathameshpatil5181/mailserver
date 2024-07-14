@@ -8,5 +8,7 @@ services:
     build: ./server
     ports:
       - 25:25
+      - 8000:8000
     environment:
       - EMAIL_PORT=25
+      - HTTP_PORT=8000
