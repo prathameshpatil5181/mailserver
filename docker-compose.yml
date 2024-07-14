@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+
+  backend:
+
+    container_name: server
+    build: ./server
+    ports:
+      - 25:25
+    environment:
+      - EMAIL_PORT=25
