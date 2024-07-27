@@ -6,7 +6,6 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 
 RUN npm i -g typescript
-RUN npm install pm2 -g
 
 EXPOSE 8000
 EXPOSE 25
