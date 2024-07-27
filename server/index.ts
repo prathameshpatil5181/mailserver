@@ -24,8 +24,8 @@ export const logger = createLogger(options);
 //setup http server
 app.get("/", (req: Request, res: Response) => {
   logger.info("this is / route");
-  res.status(200).send("<h1>Hello to everyone 🎉🎉🎉<h1>");
-  logger.info("Response: " + "<h1>Hello to everyone 🎉🎉🎉<h1>");
+  res.status(200).send("<h1>Hello to everyone 1 🎉🎉🎉<h1>");
+  logger.info("Response: " + "<h1>Hello to everyone 1 🎉🎉🎉<h1>");
 });
 
 app.listen(process.env.HTTP_PORT, () => {
