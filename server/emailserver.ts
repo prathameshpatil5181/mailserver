@@ -8,7 +8,7 @@ import { SMTPServerDataStream } from "smtp-server";
 export default class emailServerClass {
   public server: SMTPServer;
   constructor() {
-    let emaildata: SMTPServerDataStream;
+    let emaildata: string;
     this.server = new SMTPServer({
       authOptional: true,
       allowInsecureAuth: true,
@@ -44,19 +44,18 @@ export default class emailServerClass {
       onData(stream, session, callback) {
         stream.on("data", (data) => {
           try {
-            emaildata += data;
+            emaildata += data.toString();
           } catch (error) {
             logger.error({
               function: "onData",
               messge: "error occured while updating emaildata",
               error,
             });
-            throw new Error(`error occured while updating emaildata`);
+            console.log(`error occured while updating emaildata`);
           }
         });
 
         stream.on("end", () => {
-
           const parsemail = new emailclass(session);
           parsemail.parseEmailData(emaildata);
           console.log("email data");
