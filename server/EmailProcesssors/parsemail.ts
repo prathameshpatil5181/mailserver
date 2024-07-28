@@ -1,4 +1,3 @@
-
 import { Worker } from "worker_threads";
 import { SMTPServerDataStream, SMTPServerSession } from "smtp-server";
 import { stream } from "winston";
@@ -17,12 +16,12 @@ export class emailclass {
     // create the worker thead
 
     try {
-    //   if (stream === null || stream === undefined) {
-    //     console.log("Input cannot be null or undefined.");
-    //   } else {
-        this.parsedEmailData = await simpleParser(stream);
-        console.log("in parsed data");
-    //   }
+      //   if (stream === null || stream === undefined) {
+      //     console.log("Input cannot be null or undefined.");
+      //   } else {
+      this.parsedEmailData = await simpleParser(stream);
+      console.log("in parsed data");
+      //   }
     } catch (error) {
       logger.error({
         function: "parseEmailData",
@@ -35,7 +34,7 @@ export class emailclass {
     logger.info({
       session: this.session.id,
       type: "email data",
-      data: { ...this.parseEmailData },
+      data: this.parseEmailData,
     });
 
     return this.parsedEmailData;
