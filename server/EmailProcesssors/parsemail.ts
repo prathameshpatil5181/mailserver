@@ -22,6 +22,19 @@ export class emailclass {
       //   } else {
       this.parsedEmailData = await simpleParser(stream);
       console.log("in parsed data");
+      if (this.parsedEmailData !== undefined) {
+        logger.info({
+          session: this.session.id,
+          type: "email data",
+          data: this.parsedEmailData
+        });
+      } else {
+        logger.error({
+          function: "parseEmailData",
+          messge: "error occured while updating parseEmailData",
+          error: "parseEmailData is undefined",
+        });
+      }
       //   }
     } catch (error) {
       logger.error({
@@ -47,20 +60,6 @@ export class emailclass {
     // text is the plaintext body of the message
     // textAsHtml is the plaintext body of the message formatted as HTML
     // attachments is an array of attachments
-
-    if (this.parsedEmailData !== undefined) {
-      logger.info({
-        session: this.session.id,
-        type: "email data",
-        data: this.parsedEmailData,
-      });
-    } else {
-      logger.error({
-        function: "parseEmailData",
-        messge: "error occured while updating parseEmailData",
-        error: "parseEmailData is undefined",
-      });
-    }
 
     return this.parsedEmailData;
   }
