@@ -11,6 +11,7 @@ export class emailclass {
 
   constructor(session: SMTPServerSession) {
     this.session = session;
+    this.parsedEmailData = undefined;
   }
 
   public async parseEmailData(stream: string) {
@@ -20,14 +21,14 @@ export class emailclass {
       //   if (stream === null || stream === undefined) {
       //     console.log("Input cannot be null or undefined.");
       //   } else {
-      this.parsedEmailData = await simpleParser(stream);
+      this.parsedEmailData = await simpleParser(stream).then();
       console.log(this.parsedEmailData);
       console.log("in parsed data");
       if (this.parsedEmailData !== undefined) {
         logger.info({
           session: this.session.id,
           type: "email data",
-          data: this.parsedEmailData
+          data: this.parsedEmailData,
         });
       } else {
         logger.error({
