@@ -21,7 +21,7 @@ export class emailclass {
       //   if (stream === null || stream === undefined) {
       //     console.log("Input cannot be null or undefined.");
       //   } else {
-      this.parsedEmailData = await simpleParser(stream).then();
+      this.parsedEmailData = await simpleParser(stream);
       console.log(this.parsedEmailData);
       console.log("in parsed data");
       if (this.parsedEmailData !== undefined) {

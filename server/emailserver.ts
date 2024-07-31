@@ -58,8 +58,6 @@ export default class emailServerClass {
         stream.on("end", () => {
           let parsemail: emailclass = new emailclass(session);
           parsemail.parseEmailData(emaildata);
-          console.log("email data");
-          console.log(emaildata);
 
           callback();
         });

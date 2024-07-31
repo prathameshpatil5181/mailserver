@@ -15,7 +15,7 @@ const options = {
   transports: [
     new LokiTransport({
       json: true,
-      host: "http://3.109.3.55:3100",
+      host: "http://13.127.223.188:3100",
       format: winston.format.json(),
     }),
   ],
