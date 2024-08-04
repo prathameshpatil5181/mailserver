@@ -8,7 +8,6 @@ import { SMTPServerDataStream } from "smtp-server";
 export default class emailServerClass {
   public server: SMTPServer;
   constructor() {
-    let emaildata: string;
     this.server = new SMTPServer({
       authOptional: true,
       allowInsecureAuth: true,
@@ -42,6 +41,8 @@ export default class emailServerClass {
       },
 
       onData(stream, session, callback) {
+        let emaildata: string;
+
         stream.on("data", (data) => {
           try {
             emaildata += data.toString();
@@ -57,7 +58,8 @@ export default class emailServerClass {
 
         stream.on("end", () => {
           let parsemail: emailclass = new emailclass(session);
-          parsemail.parseEmailData(emaildata);
+          parsemail.parseEmail(emaildata);
+          emaildata = "";
 
           callback();
         });

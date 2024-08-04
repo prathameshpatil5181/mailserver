@@ -4,9 +4,9 @@ import emailServerClass from "./emailserver";
 require("dotenv").config();
 import express from "express";
 import { Request, Response } from "express";
-
 const app = express();
 
+export const globalpath = __dirname;
 //loki setup
 
 import winston, { createLogger, transports } from "winston";

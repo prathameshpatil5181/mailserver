@@ -1,7 +1,6 @@
-import { Worker } from "worker_threads";
-import { SMTPServerDataStream, SMTPServerSession } from "smtp-server";
-import { stream } from "winston";
+import { SMTPServerSession } from "smtp-server";
 import { simpleParser, ParsedMail } from "mailparser";
+import { attachmenthandler } from "./attachmenthandler";
 
 import { logger } from "..";
 
@@ -14,16 +13,23 @@ export class emailclass {
     this.parsedEmailData = undefined;
   }
 
-  public async parseEmailData(stream: string) {
-    // create the worker thead
-
+  public async parseEmail(stream: string) {
+    // parsing email
     try {
-      //   if (stream === null || stream === undefined) {
-      //     console.log("Input cannot be null or undefined.");
-      //   } else {
       this.parsedEmailData = await simpleParser(stream);
-      console.log(this.parsedEmailData);
-      console.log("in parsed data");
+  
+      //handle attachments
+      if (
+        this.parsedEmailData.attachments !== undefined &&
+        this.parsedEmailData.attachments.length > 0
+      ) {
+        const attach = new attachmenthandler();
+        attach.storeToS3(this.parsedEmailData?.attachments);
+      } else {
+        console.log("no attachements");
+      }
+
+      //logging logs
       if (this.parsedEmailData !== undefined) {
         logger.info({
           session: this.session.id,
@@ -37,7 +43,6 @@ export class emailclass {
           error: "parseEmailData is undefined",
         });
       }
-      //   }
     } catch (error) {
       logger.error({
         function: "parseEmailData",
@@ -47,7 +52,7 @@ export class emailclass {
       console.log("error occured while parsing");
     }
 
-    //     headers – a Map object with lowercase header keys
+    // headers – a Map object with lowercase header keys
     // subject is the subject line (also available from the header mail.headers.get(‘subject’))
     // from is an address object for the From: header
     // to is an address object for the To: header
@@ -61,7 +66,7 @@ export class emailclass {
     // html is the HTML body of the message. If the message included embedded images as cid: urls then these are all replaced with base64 formatted data: URIs
     // text is the plaintext body of the message
     // textAsHtml is the plaintext body of the message formatted as HTML
-    // attachments is an array of attachments
+    // attachments is an array of attachmentss
 
     return this.parsedEmailData;
   }
