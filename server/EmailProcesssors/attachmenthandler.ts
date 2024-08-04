@@ -69,65 +69,59 @@ export class attachmenthandler {
       });
   }
 
-  storeToS3(attchments: Attachment[]) {
-    console.log("yet to store in s3");
+  async storeToS3(attchments: Attachment[]): Promise<string[]> {
+    console.log("Starting to store attachments in S3");
 
-    Promise.all(
-      attchments.map((attachment) => {
-        new Promise(async (resolve, reject) => {
+    try {
+      const urls = await Promise.all(
+        attchments.map(async (attachment): Promise<string> => {
           const command = new PutObjectCommand({
             Bucket: "prathamesh-ai-mail",
             Key: `username/${attachment.filename}`,
             Body: attachment.content,
           });
-          try {
-            s3client
-              .send(command)
-              .then(async () => {
-                const getcommand = new GetObjectCommand({
-                  Bucket: "prathamesh-ai-mail",
-                  Key: `username/${attachment.filename}`,
-                });
 
-                const url = await getSignedUrl(s3client, getcommand);
-                console.log("done uploading");
-                console.log(url);
-                resolve("success");
-              })
-              .catch((reason) => {
-                console.log(reason);
-                logger.error({
-                  function: "storeToS3",
-                  messge: `error occured while uploading attachment`,
-                  detail: attachment,
-                  error: reason,
-                });
-              });
-          } catch (error) {
-            console.log("Error occured while wrting the file");
-            console.log(error);
+          try {
+            await s3client.send(command);
+          } catch (reason) {
+            console.log(reason);
             logger.error({
               function: "storeToS3",
-              messge: `error occured while uploading attachment`,
+              message: `Error occurred while uploading attachment`,
               detail: attachment,
-              error,
+              error: reason,
             });
-            reject("failed");
+            throw reason; // Re-throw error to be caught by Promise.all
           }
-        });
-      })
-    )
-      .then(() => {
-        logger.info({
-          type: "success in storing attachment",
-        });
-      })
-      .catch((error) => {
-        logger.error({
-          function: "parseEmail",
-          messge: "error occured while storing attachments",
-          error,
-        });
+
+          try {
+            const getCommand = new GetObjectCommand({
+              Bucket: "prathamesh-ai-mail",
+              Key: `username/${attachment.filename}`,
+            });
+            const url = await getSignedUrl(s3client, getCommand);
+            console.log("Successfully uploaded and generated URL:", url);
+            return url;
+          } catch (error) {
+            console.log("Error occurred while generating signed URL:", error);
+            throw error;
+          }
+        })
+      );
+
+      logger.info({
+        type: "Success",
+        message: "Successfully stored attachments in S3",
+        urls,
       });
+      return urls;
+    } catch (error) {
+      logger.error({
+        function: "storeToS3",
+        message: "Error occurred while storing attachments",
+        error,
+      });
+      throw error;
+    }
   }
 }

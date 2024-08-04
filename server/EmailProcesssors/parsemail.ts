@@ -1,8 +1,9 @@
 import { SMTPServerSession } from "smtp-server";
 import { simpleParser, ParsedMail } from "mailparser";
 import { attachmenthandler } from "./attachmenthandler";
-
+import { storeMessages } from "../models/updateMailModel";
 import { logger } from "..";
+import { Iinsertdatabase } from "../utils/intefacses";
 
 export class emailclass {
   public session: SMTPServerSession;
@@ -16,33 +17,53 @@ export class emailclass {
   public async parseEmail(stream: string) {
     // parsing email
     try {
-      this.parsedEmailData = await simpleParser(stream);
+     simpleParser(stream).then(async(datas)=>{
+       this.parsedEmailData = datas; 
+       let attachmentUrl:string[]; 
+         if (
+           this.parsedEmailData.attachments !== undefined &&
+           this.parsedEmailData.attachments.length > 0
+         ) {
+           const attach = new attachmenthandler();
+           attachmentUrl = await attach.storeToS3(this.parsedEmailData?.attachments);
+         } else {
+           console.log("no attachements");
+         }
+
+         const insertdatabase:Iinsertdatabase = {
+           to: this.parsedEmailData.to,
+           from: this.parsedEmailData.from?.value,
+           cc: this.parsedEmailData.cc,
+           bcc: this.parsedEmailData.bcc,
+           subject: this.parsedEmailData.subject,
+           received_date: this.parsedEmailData.date,
+           in_reply_to: this.parsedEmailData.inReplyTo,
+           refrences: this.parsedEmailData.references,
+           htmlBody: this.parsedEmailData.html,
+           textBody: this.parsedEmailData.text,
+           textAsHtml: this.parsedEmailData.textAsHtml,
+         };
+         
+         storeMessages(insertdatabase);
+
+         //logging logs
+         if (this.parsedEmailData !== undefined) {
+           logger.info({
+             session: this.session.id,
+             type: "email data",
+             data: this.parsedEmailData,
+           });
+         } else {
+           logger.error({
+             function: "parseEmailData",
+             messge: "error occured while updating parseEmailData",
+             error: "parseEmailData is undefined",
+           });
+         }
+      });
   
       //handle attachments
-      if (
-        this.parsedEmailData.attachments !== undefined &&
-        this.parsedEmailData.attachments.length > 0
-      ) {
-        const attach = new attachmenthandler();
-        attach.storeToS3(this.parsedEmailData?.attachments);
-      } else {
-        console.log("no attachements");
-      }
-
-      //logging logs
-      if (this.parsedEmailData !== undefined) {
-        logger.info({
-          session: this.session.id,
-          type: "email data",
-          data: this.parsedEmailData,
-        });
-      } else {
-        logger.error({
-          function: "parseEmailData",
-          messge: "error occured while updating parseEmailData",
-          error: "parseEmailData is undefined",
-        });
-      }
+     
     } catch (error) {
       logger.error({
         function: "parseEmailData",
@@ -67,8 +88,6 @@ export class emailclass {
     // text is the plaintext body of the message
     // textAsHtml is the plaintext body of the message formatted as HTML
     // attachments is an array of attachmentss
-
-    return this.parsedEmailData;
   }
 
   public onConnect() {}
