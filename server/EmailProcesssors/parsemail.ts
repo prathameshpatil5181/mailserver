@@ -17,53 +17,40 @@ export class emailclass {
   public async parseEmail(stream: string) {
     // parsing email
     try {
-     simpleParser(stream).then(async(datas)=>{
-       this.parsedEmailData = datas; 
-       let attachmentUrl:string[]; 
-         if (
-           this.parsedEmailData.attachments !== undefined &&
-           this.parsedEmailData.attachments.length > 0
-         ) {
-           const attach = new attachmenthandler();
-           attachmentUrl = await attach.storeToS3(this.parsedEmailData?.attachments);
-         } else {
-           console.log("no attachements");
-         }
+      simpleParser(stream).then(async (datas) => {
+        this.parsedEmailData = datas;
+        let attachmentUrl: string[] | null = null;
+        if (
+          this.parsedEmailData.attachments !== undefined &&
+          this.parsedEmailData.attachments.length > 0
+        ) {
+          const attach = new attachmenthandler();
+          attachmentUrl = await attach.storeToS3(
+            this.parsedEmailData?.attachments
+          );
+        } else {
+          console.log("no attachements");
+        }
 
-         const insertdatabase:Iinsertdatabase = {
-           to: this.parsedEmailData.to,
-           from: this.parsedEmailData.from?.value,
-           cc: this.parsedEmailData.cc,
-           bcc: this.parsedEmailData.bcc,
-           subject: this.parsedEmailData.subject,
-           received_date: this.parsedEmailData.date,
-           in_reply_to: this.parsedEmailData.inReplyTo,
-           refrences: this.parsedEmailData.references,
-           htmlBody: this.parsedEmailData.html,
-           textBody: this.parsedEmailData.text,
-           textAsHtml: this.parsedEmailData.textAsHtml,
-         };
-         
-         storeMessages(insertdatabase);
+        this.handleDataStore(attachmentUrl);
 
-         //logging logs
-         if (this.parsedEmailData !== undefined) {
-           logger.info({
-             session: this.session.id,
-             type: "email data",
-             data: this.parsedEmailData,
-           });
-         } else {
-           logger.error({
-             function: "parseEmailData",
-             messge: "error occured while updating parseEmailData",
-             error: "parseEmailData is undefined",
-           });
-         }
+        //logging logs
+        if (this.parsedEmailData !== undefined) {
+          logger.info({
+            session: this.session.id,
+            type: "email data",
+            data: this.parsedEmailData,
+          });
+        } else {
+          logger.error({
+            function: "parseEmailData",
+            messge: "error occured while updating parseEmailData",
+            error: "parseEmailData is undefined",
+          });
+        }
       });
-  
+
       //handle attachments
-     
     } catch (error) {
       logger.error({
         function: "parseEmailData",
@@ -90,5 +77,33 @@ export class emailclass {
     // attachments is an array of attachmentss
   }
 
-  public onConnect() {}
+  public async handleDataStore(attachmentUrl:string[]|null=null) {
+
+      if(this.parsedEmailData!=null){
+         const insertdatabase: Iinsertdatabase = {
+           to: this.parsedEmailData.to,
+           from: this.parsedEmailData.from?.value,
+           cc: this.parsedEmailData.cc,
+           bcc: this.parsedEmailData.bcc,
+           subject: this.parsedEmailData.subject,
+           received_date: this.parsedEmailData.date,
+           in_reply_to: this.parsedEmailData.inReplyTo,
+           refrences: this.parsedEmailData.references,
+           htmlBody: this.parsedEmailData.html,
+           textBody: this.parsedEmailData.text,
+           textAsHtml: this.parsedEmailData.textAsHtml,
+           attachmentUrl: attachmentUrl,
+         };
+
+         await storeMessages(insertdatabase);
+
+      }
+      else {
+        logger.error({
+          function: "handleDataStore",
+          messge: "eparsedemaildata in empty"
+        });
+      }
+   
+  }
 }
