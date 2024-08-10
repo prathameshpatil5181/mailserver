@@ -79,6 +79,8 @@ export class emailclass {
 
   public async handleDataStore(attachmentUrl:string[]|null=null) {
 
+
+
       if(this.parsedEmailData!=null){
          const insertdatabase: Iinsertdatabase = {
            to: this.parsedEmailData.to,

@@ -1,4 +1,37 @@
-import { AddressObject, EmailAddress } from "mailparser";
+
+export interface EmailAddress {
+  /**
+   * The email address.
+   */
+  address?: string | undefined;
+  /**
+   * The name part of the email/group.
+   */
+  name: string;
+  /**
+   * An array of grouped addresses.
+   */
+  group?: EmailAddress[] | undefined;
+}
+
+/**
+ * Address object.
+ */
+export interface AddressObject {
+  /**
+   * An array with address details.
+   */
+  value: EmailAddress[];
+  /**
+   * A formatted address string for HTML context.
+   */
+  html: string;
+  /**
+   * A formatted address string for plaintext context.
+   */
+  text: string;
+}
+
 
 export interface Iinsertdatabase {
   to: AddressObject | AddressObject[] | undefined;
@@ -12,5 +45,7 @@ export interface Iinsertdatabase {
   htmlBody: string | false;
   textBody: string | undefined;
   textAsHtml: string | undefined;
-  attachmentUrl:string[]|null;
+  attachmentUrl: string[] | null;
 }
+
+
