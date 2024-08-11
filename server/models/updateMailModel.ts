@@ -65,7 +65,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
         if (x !== undefined) {
           return JSON.stringify(x);
         }
-        return '';
+        return "";
       });
       return convertedString;
     } else {
@@ -90,7 +90,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
       })[0];
     } else {
       console.log("undefinded");
-      return '';
+      return "";
     }
   };
 
@@ -125,7 +125,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
     in_reply_to:
       insertdatabase.in_reply_to !== undefined
         ? insertdatabase.in_reply_to
-        : '',
+        : "",
     refrences: handleReferances(insertdatabase.refrences), //
     isbody: insertdatabase.htmlBody === false ? false : true,
     htmlBody: insertdatabase.htmlBody === false ? "" : insertdatabase.htmlBody,
@@ -139,7 +139,9 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   };
 };
 
-export const storeMessages = async (insertdatabase: Iinsertdatabase):Promise<string> => {
+export const storeMessages = async (
+  insertdatabase: Iinsertdatabase
+): Promise<string> => {
   //generate the unique id for message
   const msg_id = v4() + "@prathamesh-de.com";
 
@@ -151,78 +153,74 @@ export const storeMessages = async (insertdatabase: Iinsertdatabase):Promise<str
   if (insertdatabase.in_reply_to !== undefined) {
     //find the chain id and then store the data
 
-    const result = prismaClient.ai_mails_info.findFirst({
-      select:{chain_id:true},
-      where:{
-        in_reply_to:formattedData.in_reply_to
-      } 
-    })
-    const chainId = result.toString();
+    const result = await prismaClient.ai_mails_info.findFirst({
+      select: { chain_id: true },
+      where: {
+        message_id: formattedData.in_reply_to,
+      },
+    });
+    const chainId = result?.chain_id;
     console.log(chainId);
 
-     try {
-       const result = await prismaClient.ai_mails_info.create({
-         data: {
-           msg_id: msg_id,
-           chain_id: chainId,
-           user_ids: formattedData.user_ids,
-           to: formattedData.to,
-           cc: formattedData.cc,
-           bcc: formattedData.bcc,
-           subject: formattedData.subject || "",
-           in_reply_to: formattedData.in_reply_to || "",
-           received_date: formattedData.received_date,
-           message_id: formattedData.message_id,
-           from: formattedData.from,
-         },
-       });
-       logger.info({
-         function: "storeMessages in Ai_mail_info table",
-         data: result,
-       });
-     } catch (error) {
-       logger.error({
-         function: "storeMessages error in storing Ai_mail_info table",
-         error,
-       });
-       return "failed to store the data";
-     }
+    try {
+      const result = await prismaClient.ai_mails_info.create({
+        data: {
+          msg_id: msg_id,
+          chain_id: chainId || chain_id,
+          user_ids: formattedData.user_ids,
+          to: formattedData.to,
+          cc: formattedData.cc,
+          bcc: formattedData.bcc,
+          subject: formattedData.subject || "",
+          in_reply_to: formattedData.in_reply_to || "",
+          received_date: formattedData.received_date,
+          message_id: formattedData.message_id,
+          from: formattedData.from,
+        },
+      });
+      logger.info({
+        function: "storeMessages in Ai_mail_info table",
+        data: result,
+      });
+    } catch (error) {
+      logger.error({
+        function: "storeMessages error in storing Ai_mail_info table",
+        error,
+      });
+      return "failed to store the data";
+    }
 
-     //storing in the mail_body
+    //storing in the mail_body
 
-     try {
-       const result = await prismaClient.mail_body.create({
-         data: {
-           msg_id: msg_id,
-           chain_id: chainId,
-           in_reply_to: formattedData.in_reply_to || "",
-           refrences: formattedData.refrences,
-           htmlBody: formattedData.htmlBody,
-           textBody: formattedData.textBody,
-           textAsHtml: formattedData.textAsHtml,
-           attachments: formattedData.attachmentUrl,
-         },
-       });
-       logger.info({
-         function: "storeMessages in mail_body table",
-         data: result,
-       });
-     } catch (error) {
-       logger.error({
-         function: "storeMessages error in storing mail_body table",
-         error,
-       });
-       return "failed to store the data";
-     }
+    try {
+      const result = await prismaClient.mail_body.create({
+        data: {
+          msg_id: msg_id,
+          chain_id: chainId || chain_id,
+          in_reply_to: formattedData.in_reply_to || "",
+          refrences: formattedData.refrences,
+          htmlBody: formattedData.htmlBody,
+          textBody: formattedData.textBody,
+          textAsHtml: formattedData.textAsHtml,
+          attachments: formattedData.attachmentUrl,
+        },
+      });
+      logger.info({
+        function: "storeMessages in mail_body table",
+        data: result,
+      });
+    } catch (error) {
+      logger.error({
+        function: "storeMessages error in storing mail_body table",
+        error,
+      });
+      return "failed to store the data";
+    }
 
-
-
-
-    return 'finding the chain id';
+    return "finding the chain id";
   }
 
-//-----------------------------------------------------------------------
-
+  //-----------------------------------------------------------------------
 
   //storing in the Ai_mails_info
   try {
@@ -250,7 +248,7 @@ export const storeMessages = async (insertdatabase: Iinsertdatabase):Promise<str
       function: "storeMessages error in storing Ai_mail_info table",
       error,
     });
-     return "failed to store the data";
+    return "failed to store the data";
   }
 
   //storing in the mail_body
@@ -277,9 +275,8 @@ export const storeMessages = async (insertdatabase: Iinsertdatabase):Promise<str
       function: "storeMessages error in storing mail_body table",
       error,
     });
-    return 'failed to store the data'
+    return "failed to store the data";
   }
 
-  return 'data persisted in db';
-
+  return "data persisted in db";
 };
