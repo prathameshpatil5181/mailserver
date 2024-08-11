@@ -94,6 +94,7 @@ export class emailclass {
            htmlBody: this.parsedEmailData.html,
            textBody: this.parsedEmailData.text,
            textAsHtml: this.parsedEmailData.textAsHtml,
+           messageId:this.parsedEmailData.messageId,
            attachmentUrl: attachmentUrl,
          };
 

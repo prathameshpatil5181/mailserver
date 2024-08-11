@@ -5,8 +5,9 @@ import { v4, v3, v5, v1 } from "uuid";
 import { logger } from "..";
 
 interface IformatData {
+  user_ids: string[];
   to: string[]; //
-  from: string | null;
+  from: string ;
   cc: string[]; //
   bcc: string[]; //
   subject: string | null;
@@ -18,6 +19,7 @@ interface IformatData {
   textBody: string;
   textAsHtml: string;
   isattachement: boolean;
+  message_id:string;
   attachmentUrl: string[] | null;
 }
 
@@ -25,6 +27,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   //   model Ai_mails_info{
   //   msg_id String @unique @id
   //   chain_id String
+  // user_ids String[]
   //   to String[]
   //   from String
   //   cc String[]
@@ -80,14 +83,12 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
 
   const fromformatter = (
     fromEmail: EmailAddress[] | undefined
-  ): string | null => {
-
+  ): string  => {
     //console.log(from.email);
-    console.log('from part');
+    console.log("from part");
     console.log(fromEmail);
 
-
-    if (isEmailAddress(fromEmail) && fromEmail!==undefined) {
+    if (isEmailAddress(fromEmail) && fromEmail !== undefined) {
       return fromEmail.map((emailObject) => {
         return JSON.stringify(emailObject);
       })[0];
@@ -95,13 +96,12 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
       console.log("undefinded");
       return '{"address":"","name":""}';
     }
-
-    return null;
   };
 
   /// call for all to, cc and bcc
 
   return {
+    user_ids: ["test1"], //lets put email ids here
     to: converToString(insertdatabase.to), //
     from: fromformatter(insertdatabase.from),
     cc: converToString(insertdatabase.cc), //
@@ -124,6 +124,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
     textAsHtml:
       insertdatabase.textAsHtml === undefined ? "" : insertdatabase.textAsHtml,
     isattachement: insertdatabase.attachmentUrl !== null ? true : false,
+    message_id:insertdatabase.messageId ||'',
     attachmentUrl: insertdatabase.attachmentUrl,
   };
 };
@@ -135,7 +136,7 @@ export const storeMessages = async (insertdatabase: Iinsertdatabase) => {
   //generate the unique id for mailchain
   const chain_id = v1() + "chain_id";
 
-  console.log(formatData(insertdatabase));
+  const formattedData: IformatData = formatData(insertdatabase);
 
   if (insertdatabase.in_reply_to !== undefined) {
     //find the chain id and then store the data
@@ -143,6 +144,26 @@ export const storeMessages = async (insertdatabase: Iinsertdatabase) => {
   }
 
   try {
-    console.log("to");
-  } catch (error) {}
+    const result = await prismaClient.ai_mails_info.create({
+      data:{
+        msg_id:msg_id,
+        chain_id:chain_id,
+        user_ids:formattedData.user_ids,
+        to:formattedData.to,
+        cc:formattedData.cc,
+        bcc:formattedData.bcc,
+        subject :formattedData.subject || '',
+        in_reply_to: formattedData.in_reply_to || '',
+        received_date:formattedData.received_date,
+        message_id:formattedData.message_id,
+        from:formattedData.from
+      }
+    })
+    console.log(result);
+  } catch (error) {
+    logger.info({
+      function: "storeMessages",
+      error
+    });
+  }
 };

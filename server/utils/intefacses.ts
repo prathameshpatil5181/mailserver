@@ -14,6 +14,7 @@ export interface Iinsertdatabase {
   htmlBody: string | false;
   textBody: string | undefined;
   textAsHtml: string | undefined;
+  messageId:string|undefined;
   attachmentUrl: string[] | null;
 }
 

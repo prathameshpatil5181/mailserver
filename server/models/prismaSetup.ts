@@ -2,12 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { logger } from "..";
 import { query } from "express";
 const prismaClient = new PrismaClient({
-  // log: [
-  //   {
-  //     emit: "event",
-  //     level: "query",
-  //   },
-  // ],
+  log: ["query"],
 });
 
 // prismaClient.$on("query", (e:Prisma.QueryEvent) => {
