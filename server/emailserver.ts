@@ -60,7 +60,6 @@ export default class emailServerClass {
           let parsemail: emailclass = new emailclass(session);
           parsemail.parseEmail(emaildata);
           emaildata = "";
-
           callback();
         });
       },

@@ -1,0 +1,23 @@
+
+
+
+
+export class FetchEmailClass{
+
+    private user:string;
+    
+    constructor(user:string){
+        this.user=user;
+    }
+
+    get(){
+        return this.user;
+    }
+
+    async getEmails(page:string){
+
+    }
+
+}
+
+

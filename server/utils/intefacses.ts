@@ -19,3 +19,11 @@ export interface Iinsertdatabase {
 }
 
 
+export interface IreturnEmails{
+  from:string;
+  to:string;
+  cc:string;
+  subject:string;
+  msg_id:string;
+  chain_id:string;
+}

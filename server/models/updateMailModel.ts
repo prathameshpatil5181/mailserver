@@ -3,6 +3,7 @@ import { Iinsertdatabase } from "../utils/intefacses";
 import { AddressObject, EmailAddress } from "mailparser";
 import { v4, v3, v5, v1 } from "uuid";
 import { logger } from "..";
+import { add } from "winston";
 
 interface IformatData {
   user_ids: string[];
@@ -36,7 +37,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   //   in_reply_to String
   //   received_date DateTime
   //   message_id String
-  //   created_on DateTime @default(now())
+  //   created_on DateTime @defau`lt(now())
   //   @@index(fields:[msg_id,message_id])
   // }
 
@@ -75,7 +76,6 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   };
   // cc bcc and to converter function ends
 
-  // format from function type checker
   function isEmailAddress(object: any): object is EmailAddress[] {
     return true;
   }
@@ -108,10 +108,44 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
     }
   };
 
-  /// call for all to, cc and bcc
+  //useid  handelers
+
+  function isAddressArray(to:any):to is  AddressObject[]{
+    return true
+  }
+
+  function handleAddressObject(to:AddressObject):string[]{
+    let ids = to.value.filter(address=>address.address?.split('@')[1]==='prathamesh-de.com');
+    return ids.map(x=>x.address) && [''];
+  }
+
+  const handleuserIds = (to: AddressObject | AddressObject[] | undefined):string[] => {
+    let userIds:string[] = [];
+
+    if(to===undefined){
+      return [''];
+    }
+    else if(isAddressArray(to)){
+      const addressarray = to.map(x=>handleAddressObject(x));
+
+      for(let i=0;i<addressarray.length;i++){
+        for(let j=0;j<addressarray[0].length;j++){
+          userIds.push(addressarray[i][i]);
+        }
+      }
+
+    }
+    else{
+      userIds = handleAddressObject(to);
+    }
+    
+      return userIds;
+
+  };
+
 
   return {
-    user_ids: ["test1"], //lets put email ids here
+    user_ids: handleuserIds(insertdatabase.to), //lets put email ids here
     to: converToString(insertdatabase.to), //
     from: fromformatter(insertdatabase.from),
     cc: converToString(insertdatabase.cc), //
@@ -152,7 +186,6 @@ export const storeMessages = async (
 
   if (insertdatabase.in_reply_to !== undefined) {
     //find the chain id and then store the data
-
     const result = await prismaClient.ai_mails_info.findFirst({
       select: { chain_id: true },
       where: {
@@ -220,7 +253,6 @@ export const storeMessages = async (
     return "finding the chain id";
   }
 
-  //-----------------------------------------------------------------------
 
   //storing in the Ai_mails_info
   try {

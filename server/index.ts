@@ -4,7 +4,11 @@ import emailServerClass from "./emailserver";
 require("dotenv").config();
 import express from "express";
 import { Request, Response } from "express";
+import emailRouter from "./routes/email.routes";
+import cookieParser from "cookie-parser";
+
 const app = express();
+app.use(cookieParser());
 
 export const globalpath = __dirname;
 //loki setup
@@ -28,6 +32,8 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).send("<h1>Hello to everyone 5 🎉🎉🎉<h1>");
   logger.info("Response: " + "<h1>Hello to everyone 5 🎉🎉🎉<h1>");
 });
+
+app.use("/email", emailRouter);
 
 app.listen(process.env.HTTP_PORT, () => {
   console.log(`server running on port ${process.env.HTTP_PORT}`);
