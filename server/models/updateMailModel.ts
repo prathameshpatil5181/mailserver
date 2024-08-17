@@ -37,7 +37,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   //   in_reply_to String
   //   received_date DateTime
   //   message_id String
-  //   created_on DateTime @default(now())
+  //   created_on DateTime @defau`lt(now())
   //   @@index(fields:[msg_id,message_id])
   // }
 
