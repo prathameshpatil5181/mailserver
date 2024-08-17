@@ -116,7 +116,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
 
   function handleAddressObject(to: AddressObject): string[] {
     let ids = to.value.filter(
-      (address) => address.address?.split("@")[1] === "prathamesh-de.com"
+      (address) => address.address?.split("@")[1] === "prathamesh-de.me"
     );
     console.log('ids are')
     console.log(ids);
