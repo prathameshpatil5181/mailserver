@@ -41,7 +41,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   //   @@index(fields:[msg_id,message_id])
   // }
 
-  // cc bcc and to converter function
+  // cc bcc and to converter to string function
   const converToString = (
     convert: AddressObject | AddressObject[] | undefined
   ): string[] => {
@@ -57,7 +57,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
         return JSON.stringify(x.value);
       });
 
-      return convertedString;
+      return convertedString;``
     }
     //not a array
 
@@ -74,7 +74,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
       return convertedString;
     }
   };
-  // cc bcc and to converter function ends
+  // cc bcc and to converter to string function ends
 
   function isEmailAddress(object: any): object is EmailAddress[] {
     return true;
@@ -118,7 +118,14 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
     let ids = to.value.filter(
       (address) => address.address?.split("@")[1] === "prathamesh-de.com"
     );
-    return ids.map((x) => x.address) && [""];
+    console.log('ids are')
+    console.log(ids);
+    if (ids===undefined){
+      return ['']
+    }
+    else{
+      return ids.map((x) => x.address||'')
+    }
   }
 
   const handleuserIds = (
@@ -179,9 +186,11 @@ export const storeMessages = async (
   const msg_id = v4() + "@prathamesh-de.com";
 
   //generate the unique id for mailchain
-  const chain_id = v1() + "chain_id";
+  const chain_id = v1() + "@_chain_id";
 
   const formattedData: IformatData = formatData(insertdatabase);
+
+  console.log(formattedData);
 
   if (insertdatabase.in_reply_to !== undefined) {
     //find the chain id and then store the data
