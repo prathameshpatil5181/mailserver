@@ -183,7 +183,7 @@ export const storeMessages = async (
   insertdatabase: Iinsertdatabase
 ): Promise<string> => {
   //generate the unique id for message
-  const msg_id = v4() + "@prathamesh-de.com";
+  const msg_id = v4() + "@prathamesh-de.me";
 
   //generate the unique id for mailchain
   const chain_id = v1() + "@_chain_id";
