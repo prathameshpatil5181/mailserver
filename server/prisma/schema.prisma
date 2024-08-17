@@ -21,7 +21,7 @@ model USER{
   created_on DateTime @default(now())
   update_on DateTime @default(now())
 
-  @@index(fields: [email_id(sort:Desc)])
+  @@index(fields: [ email_id(sort:Desc)])
 }
 
 model Ai_mails_info{
@@ -37,7 +37,7 @@ model Ai_mails_info{
   received_date DateTime
   message_id String
   created_on DateTime @default(now())
-  @@index(fields:[msg_id,message_id])
+  @@index(fields:[received_date(sort:Desc),message_id])
 }
 
 model mail_body{
@@ -50,5 +50,5 @@ model mail_body{
   textAsHtml String
   attachments String[]
   created_on DateTime @default(now())
-  @@index(fields:[msg_id(sort:Desc),chain_id])
+  @@index(fields:[created_on(sort:Desc),chain_id])
 }

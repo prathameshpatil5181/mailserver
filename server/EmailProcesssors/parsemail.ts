@@ -79,8 +79,6 @@ export class emailclass {
 
   public async handleDataStore(attachmentUrl:string[]|null=null) {
 
-
-
       if(this.parsedEmailData!=null){
          const insertdatabase: Iinsertdatabase = {
            to: this.parsedEmailData.to,
@@ -98,7 +96,23 @@ export class emailclass {
            attachmentUrl: attachmentUrl,
          };
 
-         await storeMessages(insertdatabase);
+        storeMessages(insertdatabase).then(
+          (result)=>{
+            if(result==='failed to store the data'){
+               logger.error({
+                 function: "handleDataStore",
+                 messge: "failed to to store data",
+               });
+            }
+            else{
+              logger.info({
+                session: this.session.id,
+                function: "handleDataStore",
+                data: result,
+              });
+            }
+          }
+        );
 
       }
       else {
