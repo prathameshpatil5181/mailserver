@@ -110,39 +110,38 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
 
   //useid  handelers
 
-  function isAddressArray(to:any):to is  AddressObject[]{
-    return true
+  function isAddressArray(to: any): to is AddressObject {
+    return true;
   }
 
-  function handleAddressObject(to:AddressObject):string[]{
-    let ids = to.value.filter(address=>address.address?.split('@')[1]==='prathamesh-de.com');
-    return ids.map(x=>x.address) && [''];
+  function handleAddressObject(to: AddressObject): string[] {
+    let ids = to.value.filter(
+      (address) => address.address?.split("@")[1] === "prathamesh-de.com"
+    );
+    return ids.map((x) => x.address) && [""];
   }
 
-  const handleuserIds = (to: AddressObject | AddressObject[] | undefined):string[] => {
-    let userIds:string[] = [];
+  const handleuserIds = (
+    to: AddressObject | AddressObject[] | undefined
+  ): string[] => {
+    let userIds: string[] = [];
 
-    if(to===undefined){
-      return [''];
-    }
-    else if(isAddressArray(to)){
-      const addressarray = to.map(x=>handleAddressObject(x));
+    if (to === undefined) {
+      return [""];
+    } else if (isAddressArray(to)===false) {
+      const addressarray = to.map((x) => handleAddressObject(x));
 
-      for(let i=0;i<addressarray.length;i++){
-        for(let j=0;j<addressarray[0].length;j++){
+      for (let i = 0; i < addressarray.length; i++) {
+        for (let j = 0; j < addressarray[0].length; j++) {
           userIds.push(addressarray[i][i]);
         }
       }
-
-    }
-    else{
+    } else {
       userIds = handleAddressObject(to);
     }
-    
-      return userIds;
 
+    return userIds;
   };
-
 
   return {
     user_ids: handleuserIds(insertdatabase.to), //lets put email ids here
@@ -252,7 +251,6 @@ export const storeMessages = async (
 
     return "finding the chain id";
   }
-
 
   //storing in the Ai_mails_info
   try {
