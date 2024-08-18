@@ -7,7 +7,7 @@ const getRequestedEmail = async (msgId: string, chainId: string) => {
   const currenttime = new Date().getTime();
   try {
     const response = await prismaClient.ai_mails_info.findMany({
-        relationLoadStrategy: 'join',
+        // relationLoadStrategy: 'join',
         include:{
             mailBody:true
         },
