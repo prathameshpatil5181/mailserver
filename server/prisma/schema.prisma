@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -24,34 +25,69 @@ model USER{
   @@index(fields: [ email_id(sort:Desc)])
 }
 
-model Ai_mails_info{
-  msg_id String @unique @id 
-  chain_id String 
-  user_ids String[]
-  to String?
-  from String 
-  cc String?
-  bcc String?
-  subject String
-  in_reply_to String
+// model Ai_mails_info{
+//   msg_id String @unique @id 
+//   chain_id String 
+//   user_ids String[]
+//   to String?
+//   from String 
+//   cc String?
+//   bcc String?
+//   subject String
+//   in_reply_to String
+//   received_date DateTime
+//   message_id String
+//   created_on DateTime @default(now())
+//   @@index(fields:[received_date(sort:Desc),message_id])
+// }
+
+// model mail_body{
+//   msg_id String @unique @id 
+//   chain_id String 
+//   in_reply_to String
+//   refrences String[]
+//   htmlBody String
+//   textBody String 
+//   textAsHtml String
+//   attachments String[]
+//   created_on DateTime @default(now())
+//   @@index(fields:[created_on(sort:Desc),chain_id])
+// }
+
+
+model Ai_mails_info {
+  msg_id        String      @unique @id
+  chain_id      String
+  user_ids      String[]
+  to            String?
+  from          String
+  cc            String?
+  bcc           String?
+  subject       String
+  in_reply_to   String
   received_date DateTime
-  message_id String
-  created_on DateTime @default(now())
-  @@index(fields:[received_date(sort:Desc),message_id])
+  message_id    String
+  created_on    DateTime    @default(now())
+  mailBody      mail_body?  @relation(fields: [msg_id], references: [msg_id]) // Define relation to mail_body
+
+  @@index(fields: [received_date(sort: Desc), message_id])
 }
 
-model mail_body{
-  msg_id String @unique @id 
-  chain_id String 
-  in_reply_to String
-  refrences String[]
-  htmlBody String
-  textBody String 
-  textAsHtml String
-  attachments String[]
-  created_on DateTime @default(now())
-  @@index(fields:[created_on(sort:Desc),chain_id])
+model mail_body {
+  msg_id        String       @unique @id
+  chain_id      String
+  in_reply_to   String
+  refrences     String[]
+  htmlBody      String
+  textBody      String
+  textAsHtml    String
+  attachments   String[]
+  created_on    DateTime     @default(now())
+  Ai_mails_info Ai_mails_info? // Just reference the relation without the `@relation` argument
+
+  @@index(fields: [created_on(sort: Desc), chain_id])
 }
+
 
 model test_table{
   id String @unique @id @default(uuid())
