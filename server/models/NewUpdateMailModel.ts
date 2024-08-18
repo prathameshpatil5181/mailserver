@@ -44,11 +44,15 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
   const converToString = (
     convert: AddressObject | AddressObject[] | undefined
   ): string => {
-    if (convert === undefined) {
-      return "";
-    } else {
-      return JSON.stringify(convert);
+
+
+    if(convert===undefined){
+        return ''
     }
+    else{
+        return JSON.stringify(convert);
+    }
+    
   };
   // cc bcc and to converter to string function ends
 
@@ -155,7 +159,7 @@ export const formatData = (insertdatabase: Iinsertdatabase): IformatData => {
 };
 
 //main function *******************************
-//*********************************************
+//********************************************* 
 
 export const storeMessages = async (
   insertdatabase: Iinsertdatabase

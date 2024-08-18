@@ -1,5 +1,5 @@
 
-const users:{name:string;email:string}[] = [
+export const users:{name:string;email:string}[] = [
   {
     name: "prathamesh",
     email: "prathamesh@prathamesh-de.me",
@@ -10,7 +10,7 @@ const users:{name:string;email:string}[] = [
   }
 ];
 
-const FromHandler = (from:string):boolean=>{
+export const FromHandler = (from:string):boolean=>{
 
     const result = users.find(x=>x.email==from);
 

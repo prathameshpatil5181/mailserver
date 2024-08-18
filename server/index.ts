@@ -8,6 +8,7 @@ import emailRouter from "./routes/email.routes";
 import cookieParser from "cookie-parser";
 import testRouter from "./test/test.routes"; // this one is  used to test functionlalities
 const app = express();
+app.use(express.json());
 app.use(cookieParser());
 
 export const globalpath = __dirname;

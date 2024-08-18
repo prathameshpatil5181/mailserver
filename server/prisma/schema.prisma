@@ -28,10 +28,10 @@ model Ai_mails_info{
   msg_id String @unique @id 
   chain_id String 
   user_ids String[]
-  to String[]
+  to String?
   from String 
-  cc String[]
-  bcc String[]
+  cc String?
+  bcc String?
   subject String
   in_reply_to String
   received_date DateTime
