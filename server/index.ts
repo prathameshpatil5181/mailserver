@@ -6,7 +6,7 @@ import express from "express";
 import { Request, Response } from "express";
 import emailRouter from "./routes/email.routes";
 import cookieParser from "cookie-parser";
-
+import testRouter from "./test/test.routes"; // this one is  used to test functionlalities
 const app = express();
 app.use(cookieParser());
 
@@ -34,7 +34,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/email", emailRouter);
-
+app.use('/test',testRouter);
 app.listen(process.env.HTTP_PORT, () => {
   console.log(`server running on port ${process.env.HTTP_PORT}`);
 });

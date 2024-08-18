@@ -52,3 +52,8 @@ model mail_body{
   created_on DateTime @default(now())
   @@index(fields:[created_on(sort:Desc),chain_id])
 }
+
+model test_table{
+  id String @unique @id @default(uuid())
+  jsonobject Json
+}
