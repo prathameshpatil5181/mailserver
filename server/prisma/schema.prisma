@@ -62,8 +62,8 @@ model Ai_mails_info {
   from          String
   cc            String?
   bcc           String?
-  subject       String
-  in_reply_to   String
+  subject       String?
+  in_reply_to   String?
   received_date DateTime
   message_id    String
   created_on    DateTime    @default(now())
@@ -76,7 +76,7 @@ model Ai_mails_info {
 model mail_body {
   msg_id        String       @unique @id
   chain_id      String
-  in_reply_to   String
+  in_reply_to   String?
   refrences     String[]
   htmlBody      String
   textBody      String
@@ -95,3 +95,5 @@ model test_table{
   id String @unique @id @default(uuid())
   jsonobject Json
 }
+
+

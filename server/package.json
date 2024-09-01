@@ -27,6 +27,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "ioredis": "^5.4.1",
     "mailparser": "^3.7.1",
     "smtp-server": "^3.13.4",
     "uuid": "^10.0.0",

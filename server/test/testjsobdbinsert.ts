@@ -1,5 +1,6 @@
 import prismaClient from "../models/prismaSetup";
-import { json, Request, Response } from "express";
+import { Request, Response } from "express";
+import { ConnectionSet } from "../utils/utilityVariables";
 export const testjsobdbinsert = async (req: Request, res: Response) => {
   const testobj = [
     { address: "recipient1@prathamesh-de.com", name: "" },
@@ -122,3 +123,20 @@ export const convertToJsonTest = async (req: Request, res: Response) => {
     throw new Error("lets be forward");
   }
 };
+
+
+export const dummyres = (req:Request,res:Response)=>{
+
+  res.send('done');
+}
+
+
+
+export const sendMessage = (req:Request,res:Response)=>{
+
+  ConnectionSet.forEach(x=>{
+    x.write(`data: hii \n\n`);
+  })
+
+  res.send("done");
+}

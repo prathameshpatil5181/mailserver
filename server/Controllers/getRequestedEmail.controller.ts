@@ -6,7 +6,7 @@ const getRequestedEmailController = (req: Request, res: Response) => {
   const chain_id = req.body.chainId;
 
   if (msg_id === undefined || chain_id === undefined) {
-    res.send(400).json({
+    res.status(400).json({
       status: "Insufficient data",
     });
     return;

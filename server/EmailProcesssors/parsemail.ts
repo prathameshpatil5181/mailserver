@@ -2,8 +2,11 @@ import { SMTPServerSession } from "smtp-server";
 import { simpleParser, ParsedMail } from "mailparser";
 import { attachmenthandler } from "./attachmenthandler";
 import { storeMessages } from "../models/updateMailModel";
+// import { storeMessages } from "../models/NewUpdateMailModel";
 import { logger } from "..";
-import { Iinsertdatabase } from "../utils/intefacses";
+import { Iinsertdatabase, IparsedEmail } from "../utils/intefacses";
+import { FormatEmailClass } from "../Classes/FormatEmailClass";
+import sendEmailToClient from "./sendEmailToClient";
 
 export class emailclass {
   public session: SMTPServerSession;
@@ -77,50 +80,48 @@ export class emailclass {
     // attachments is an array of attachmentss
   }
 
-  public async handleDataStore(attachmentUrl:string[]|null=null) {
+  public async handleDataStore(attachmentUrl: string[] | null = null) {
+    if (this.parsedEmailData != null) {
+      const insertdatabase: IparsedEmail = {
+        to: this.parsedEmailData.to,
+        from: this.parsedEmailData.from?.value,
+        cc: this.parsedEmailData.cc,
+        bcc: this.parsedEmailData.bcc,
+        subject: this.parsedEmailData.subject,
+        received_date: this.parsedEmailData.date,
+        in_reply_to: this.parsedEmailData.inReplyTo,
+        refrences: this.parsedEmailData.references,
+        htmlBody: this.parsedEmailData.html,
+        textBody: this.parsedEmailData.text,
+        textAsHtml: this.parsedEmailData.textAsHtml,
+        messageId: this.parsedEmailData.messageId,
+        attachmentUrl: attachmentUrl,
+      };
 
-      if(this.parsedEmailData!=null){
-         const insertdatabase: Iinsertdatabase = {
-           to: this.parsedEmailData.to,
-           from: this.parsedEmailData.from?.value,
-           cc: this.parsedEmailData.cc,
-           bcc: this.parsedEmailData.bcc,
-           subject: this.parsedEmailData.subject,
-           received_date: this.parsedEmailData.date,
-           in_reply_to: this.parsedEmailData.inReplyTo,
-           refrences: this.parsedEmailData.references,
-           htmlBody: this.parsedEmailData.html,
-           textBody: this.parsedEmailData.text,
-           textAsHtml: this.parsedEmailData.textAsHtml,
-           messageId:this.parsedEmailData.messageId,
-           attachmentUrl: attachmentUrl,
-         };
+      const formatEmailobject = new FormatEmailClass(insertdatabase);
+      storeMessages(formatEmailobject).then((result) => {
+        if (result === "failed to store the data") {
+          logger.error({
+            function: "handleDataStore",
+            messge: "failed to to store data",
+          });
+        } else {
+          logger.info({
+            session: this.session.id,
+            function: "handleDataStore",
+            data: result,
+          });
 
-        storeMessages(insertdatabase).then(
-          (result)=>{
-            if(result==='failed to store the data'){
-               logger.error({
-                 function: "handleDataStore",
-                 messge: "failed to to store data",
-               });
-            }
-            else{
-              logger.info({
-                session: this.session.id,
-                function: "handleDataStore",
-                data: result,
-              });
-            }
-          }
-        );
+          //sending email to the client
 
-      }
-      else {
-        logger.error({
-          function: "handleDataStore",
-          messge: "eparsedemaildata in empty"
-        });
-      }
-   
+          sendEmailToClient(formatEmailobject);
+        }
+      });
+    } else {
+      logger.error({
+        function: "handleDataStore",
+        messge: "eparsedemaildata in empty",
+      });
+    }
   }
 }

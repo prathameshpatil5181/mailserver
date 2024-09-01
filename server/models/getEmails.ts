@@ -4,16 +4,26 @@ const pageitems:number = 3;
 
 
 interface IgetEmails {
-    msg_id: string;
-    chain_id: string;
-    user_ids: string[];
-    to: string | null;
-    from: string;
-    cc: string | null;
-    subject: string;
-    received_date: Date;
-    message_id: string;
+  msg_id: string;
+  chain_id: string;
+  user_ids: string[];
+  to: string | null;
+  from: string;
+  cc: string | null;
+  subject: string | null;
+  received_date: Date;
+  message_id: string;
 };
+
+    // msg_id: string;
+    // chain_id: string;
+    // user_ids: string[];
+    // to: string | null;
+    // from: string;
+    // cc: string | null;
+    // subject: string | null;
+    // received_date: Date;
+    // message_id: string;
 
  const getEmails =  async(userId:string,page:number):Promise<IgetEmails[] |string>=>{
 

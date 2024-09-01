@@ -7,6 +7,7 @@ import { Request, Response } from "express";
 import emailRouter from "./routes/email.routes";
 import cookieParser from "cookie-parser";
 import testRouter from "./test/test.routes"; // this one is  used to test functionlalities
+import connectionRouter from "./routes/connection.routes";
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -30,12 +31,13 @@ export const logger = createLogger(options);
 //setup http server
 app.get("/", (req: Request, res: Response) => {
   logger.info("this is / route");
-  res.status(200).send("<h1>Hello to everyone 5 🎉🎉🎉<h1>");
+  res.sendStatus(200).send("<h1>Hello to everyone 5 🎉🎉🎉<h1>");
   logger.info("Response: " + "<h1>Hello to everyone 5 🎉🎉🎉<h1>");
 });
 
 app.use("/email", emailRouter);
 app.use('/test',testRouter);
+app.use("/connect",connectionRouter);
 app.listen(process.env.HTTP_PORT, () => {
   console.log(`server running on port ${process.env.HTTP_PORT}`);
 });
