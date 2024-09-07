@@ -90,6 +90,14 @@ model mail_body {
   @@index(fields: [created_on(sort: Desc), chain_id])
 }
 
+model credentials{
+  id String  @default(uuid()) @unique @id
+  authId String @unique
+  password String
+  createdOn DateTime @default(now())
+  lastUpdated DateTime @default(now())
+  @@index(fields: [authId(sort:Desc)])
+}   
 
 model test_table{
   id String @unique @id @default(uuid())
