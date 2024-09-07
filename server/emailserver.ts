@@ -4,6 +4,8 @@ const simpleParser = require("mailparser").simpleParser;
 import { logger } from ".";
 import { emailclass } from "./EmailProcesssors/parsemail";
 import { SMTPServerDataStream } from "smtp-server";
+import credentials from "./models/credentials";
+import { error } from "winston";
 
 export default class emailServerClass {
   public server: SMTPServer;
@@ -11,6 +13,30 @@ export default class emailServerClass {
     this.server = new SMTPServer({
       authOptional: true,
       allowInsecureAuth: true,
+      async onAuth(auth, session, callback) {
+        logger.info({
+          function: "emailServerClassConstructor",
+          messge: "authetication",
+          info: session,
+        });
+        if (auth.username) {
+          try {
+            const creds = await credentials(auth.username);
+
+            if (creds === false) {
+              callback(new Error("Unauthorized"));
+            } else {
+              if (auth.password === creds.password) {
+                return callback(null, { user: auth.username });
+              } else {
+                callback(new Error("Unauthorized"));
+              }
+            }
+          } catch (error) {
+            callback(new Error("failed authentication"));
+          }
+        }
+      },
       onConnect(session, callback) {
         console.log("onConnect", session.id);
         logger.info({
